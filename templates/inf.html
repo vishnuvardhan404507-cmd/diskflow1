@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Developers | DiskFlow Architects</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+         :root {
+            --mint: #00ffaa;
+            --bg: #030303;
+        }
+        
+        body {
+            background-color: var(--bg);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+        }
+        /* --- THE INTERACTIVE SHINE --- */
+        
+        .shining-card {
+            background: rgba(15, 15, 15, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 28px;
+            position: relative;
+            overflow: hidden;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center;
+        }
+        /* Mouse Tracking Cursor Glow */
+        
+        .shining-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient( 600px circle at var(--mouse-x) var(--mouse-y), rgba(0, 255, 170, 0.15), transparent 40%);
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: none;
+        }
+        
+        .shining-card:hover::before {
+            opacity: 1;
+        }
+        
+        .shining-card:hover {
+            border-color: rgba(0, 255, 170, 0.5);
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+        }
+        
+        .profile-ring {
+            position: relative;
+            padding: 3px;
+            background: linear-gradient(45deg, var(--mint), transparent);
+            border-radius: 50%;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+        }
+        
+        .neon-text {
+            color: var(--mint);
+            text-shadow: 0 0 10px rgba(0, 255, 170, 0.3);
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="p-10 flex justify-between max-w-7xl mx-auto items-center">
+        <a href="/" class="text-2xl font-black text-[#00ffaa] tracking-tighter uppercase">DiskFlow</a>
+        <div class="flex gap-8 text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500">
+            <a href="/" class="hover:text-white transition">Simulator</a>
+            <a href="/solutions" class="hover:text-white transition">Solutions</a>
+            <a href="/developers" class="text-white border-b border-[#00ffaa]">Developers</a>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-8 py-16 relative z-10">
+        <div class="text-center mb-16">
+            <h1 class="text-5xl font-black uppercase tracking-tighter mb-4">The <span class="neon-text">Architects</span></h1>
+            <p class="text-zinc-500 text-sm tracking-[0.3em] uppercase">Engineering Excellence by Rakthapinjari Creations</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+            <div class="shining-card p-10">
+                <div class="profile-ring">
+                    <div class="w-20 h-20 bg-zinc-900 rounded-full flex items-center justify-center border-2 border-black">
+                        <span class="text-2xl font-black text-[#00ffaa]">AR</span>
+                    </div>
+                </div>
+                <h3 class="text-xl font-bold uppercase mb-2">M Ayyappa Reddy</h3>
+                <p class="text-[#00ffaa] text-[10px] font-bold tracking-widest mb-1">REG: 12405548</p>
+                <p class="text-zinc-500 text-[9px] font-bold tracking-widest uppercase mb-6">Section: K24BG</p>
+                <div class="pt-6 border-t border-zinc-800 text-zinc-400 text-xs">Lead Algorithm Engineer</div>
+            </div>
+
+            <div class="shining-card p-10">
+                <div class="profile-ring">
+                    <div class="w-20 h-20 bg-zinc-900 rounded-full flex items-center justify-center border-2 border-black">
+                        <span class="text-2xl font-black text-[#00ffaa]">SS</span>
+                    </div>
+                </div>
+                <h3 class="text-xl font-bold uppercase mb-2">S Sarath Naga Durga Sai</h3>
+                <p class="text-[#00ffaa] text-[10px] font-bold tracking-widest mb-1">REG: 12405548</p>
+                <p class="text-zinc-500 text-[9px] font-bold tracking-widest uppercase mb-6">Section: K24BG</p>
+                <div class="pt-6 border-t border-zinc-800 text-zinc-400 text-xs">UI/UX Visual Architect</div>
+            </div>
+
+            <div class="shining-card p-10">
+                <div class="profile-ring">
+                    <div class="w-20 h-20 bg-zinc-900 rounded-full flex items-center justify-center border-2 border-black">
+                        <span class="text-2xl font-black text-[#00ffaa]">VR</span>
+                    </div>
+                </div>
+                <h3 class="text-xl font-bold uppercase mb-2">P Vishnuvardhan Reddy</h3>
+                <p class="text-[#00ffaa] text-[10px] font-bold tracking-widest mb-1">REG: 12405548</p>
+                <p class="text-zinc-500 text-[9px] font-bold tracking-widest uppercase mb-6">Section: K24BG</p>
+                <div class="pt-6 border-t border-zinc-800 text-zinc-400 text-xs">Backend Systems Specialist</div>
+            </div>
+
+        </div>
+
+        <footer class="mt-24 text-center opacity-30">
+            <p class="text-[9px] tracking-[1em] uppercase font-bold text-zinc-400 mb-4">A Production By</p>
+            <h2 class="text-2xl font-black tracking-widest uppercase">RAKTHAPINJARI <span class="text-[#00ffaa]">CREATIONS</span></h2>
+        </footer>
+    </main>
+
+    <script>
+        // Interactive Shine Logic
+        document.querySelectorAll('.shining-card').forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+            });
+        });
+    </script>
+</body>
+
+</html>

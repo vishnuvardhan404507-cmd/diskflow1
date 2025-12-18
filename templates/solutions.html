@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>DiskFlow | Technical Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+         :root {
+            --mint: #00ffaa;
+            --bg: #030303;
+        }
+        
+        body {
+            background-color: var(--bg);
+            color: #aaa;
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+        }
+        /* --- INTERACTIVE GLOW --- */
+        
+        .shining-card {
+            background: rgba(15, 15, 15, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+            transition: 0.3s;
+            margin-bottom: 2.5rem;
+        }
+        
+        .shining-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(0, 255, 170, 0.12), transparent 40%);
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: none;
+        }
+        
+        .shining-card:hover::before {
+            opacity: 1;
+        }
+        
+        .shining-card:hover {
+            border-color: rgba(0, 255, 170, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .neon-mint {
+            color: var(--mint);
+            text-shadow: 0 0 10px rgba(0, 255, 170, 0.3);
+        }
+        
+        .math-block {
+            background: #000;
+            padding: 15px;
+            border-radius: 12px;
+            font-family: 'Courier New', monospace;
+            color: var(--mint);
+            border-left: 4px solid var(--mint);
+            margin: 15px 0;
+        }
+        
+        h2 {
+            color: white;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -0.025em;
+        }
+        
+        b {
+            color: #eee;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="p-10 flex justify-between max-w-7xl mx-auto items-center">
+        <a href="/" class="text-2xl font-black text-[#00ffaa] tracking-tighter uppercase">DiskFlow</a>
+        <div class="flex gap-8 text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500">
+            <a href="/" class="hover:text-white transition">Simulator</a>
+            <a href="/solutions" class="text-white border-b border-[#00ffaa]">Solutions</a>
+            <a href="/developers" class="hover:text-white transition">Developers</a>
+        </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto px-8 py-10">
+        <header class="mb-16">
+            <h1 class="text-6xl font-black text-white uppercase tracking-tighter mb-4">Core <span class="neon-mint">Logic</span></h1>
+            <p class="text-zinc-500 tracking-[0.3em] uppercase text-xs">A comprehensive guide to Disk Scheduling Algorithms</p>
+        </header>
+
+        <section class="shining-card p-10">
+            <h2 class="text-3xl mb-4">01. FCFS (First-Come, First-Served)</h2>
+            <p>FCFS is the simplest disk scheduling algorithm. It services requests strictly in the order they arrive in the I/O queue.</p>
+            <div class="math-block">Seek Distance = |Initial - R1| + |R1 - R2| + ... + |Rn-1 - Rn|</div>
+            <ul class="list-disc ml-6 mt-4 space-y-2">
+                <li><b>Pros:</b> Zero overhead; every request is handled fairly without priority logic.</li>
+                <li><b>Cons:</b> Suffers from the "Convoy Effect" where large seek movements occur between distant tracks.</li>
+            </ul>
+        </section>
+
+        <section class="shining-card p-10">
+            <h2 class="text-3xl mb-4">02. SSTF (Shortest Seek Time First)</h2>
+            <p>SSTF selects the request that is physically closest to the current position of the disk head, regardless of the order of arrival.</p>
+
+            <ul class="list-disc ml-6 mt-4 space-y-2">
+                <li><b>Pros:</b> Significantly reduces total seek time compared to FCFS.</li>
+                <li><b>Cons:</b> Leads to <b>Starvation</b>. If new requests keep arriving near the head, distant requests may never be serviced.</li>
+            </ul>
+        </section>
+
+        <section class="shining-card p-10">
+            <h2 class="text-3xl mb-4">03. SCAN & LOOK (Elevator)</h2>
+            <p>These algorithms mimic the behavior of a building elevator. The head moves in one direction, servicing all requests until it hits a limit, then reverses.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <div class="bg-zinc-900/50 p-6 rounded-xl border border-zinc-800">
+                    <h3 class="text-white font-bold mb-2">SCAN</h3>
+                    <p class="text-sm">The head travels to the very edge of the disk (Track 0 or 199) before reversing, even if no request exists there.</p>
+                </div>
+                <div class="bg-zinc-900/50 p-6 rounded-xl border border-zinc-800">
+                    <h3 class="text-white font-bold mb-2">LOOK</h3>
+                    <p class="text-sm">An optimized version of SCAN. The head "looks" ahead and reverses immediately after servicing the last request in that direction.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="shining-card p-10">
+            <h2 class="text-3xl mb-4">04. C-SCAN & C-LOOK (Circular)</h2>
+            <p>To provide a more uniform waiting time, circular versions do not service requests in the reverse direction. Instead, they "jump" back to the start.</p>
+
+            <div class="math-block">Jump Distance (C-SCAN) = |199 - 0| (Max Seek)</div>
+            <ul class="list-disc ml-6 mt-4 space-y-2 text-sm">
+                <li><b>C-SCAN:</b> Moves to end, jumps to 0, and starts again. Provides extremely uniform wait times.</li>
+                <li><b>C-LOOK:</b> Moves to the highest request, jumps to the lowest request, and continues. Most efficient for high-density requests.</li>
+            </ul>
+        </section>
+
+        <section class="shining-card p-0 overflow-hidden">
+            <div class="p-8">
+                <h2 class="text-2xl">Summary Matrix</h2>
+            </div>
+            <table class="w-full text-left border-collapse">
+                <thead class="bg-zinc-900 text-[#00ffaa] text-[10px] uppercase tracking-widest">
+                    <tr>
+                        <th class="p-6">Algorithm</th>
+                        <th class="p-6">Efficiency</th>
+                        <th class="p-6">Starvation Risk</th>
+                    </tr>
+                </thead>
+                <tbody class="text-sm border-t border-zinc-800">
+                    <tr class="border-b border-zinc-900">
+                        <td class="p-6 text-white font-bold">FCFS</td>
+                        <td class="p-6">Poor</td>
+                        <td class="p-6 text-red-500">None</td>
+                    </tr>
+                    <tr class="border-b border-zinc-900">
+                        <td class="p-6 text-white font-bold">SSTF</td>
+                        <td class="p-6">High</td>
+                        <td class="p-6 text-red-500">Very High</td>
+                    </tr>
+                    <tr class="border-b border-zinc-900">
+                        <td class="p-6 text-white font-bold">LOOK</td>
+                        <td class="p-6">Optimal</td>
+                        <td class="p-6 text-red-500">Low</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <footer class="text-center mt-20 opacity-30">
+            <p class="text-[10px] tracking-[0.5em] uppercase font-bold">A Production By</p>
+            <h2 class="text-2xl font-black">RAKTHAPINJARI <span class="text-[#00ffaa]">CREATIONS</span></h2>
+        </footer>
+    </main>
+
+    <script>
+        // Interactive Shine Script for all cards
+        document.querySelectorAll('.shining-card').forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+            });
+        });
+    </script>
+</body>
+
+</html>
