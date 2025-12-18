@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>DiskFlow | Interactive Glow</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+         :root {
+            --mint: #00ffaa;
+            --bg: #030303;
+        }
+        
+        body {
+            background-color: var(--bg);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            overflow-x: hidden;
+        }
+        /* --- MOUSE TRACKING GLOW --- */
+        
+        .shining-card {
+            background: rgba(15, 15, 15, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.3s;
+        }
+        
+        .shining-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(0, 255, 170, 0.1), transparent 40%);
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: none;
+        }
+        
+        .shining-card:hover::before {
+            opacity: 1;
+        }
+        
+        .shining-card:hover {
+            border-color: rgba(0, 255, 170, 0.5);
+        }
+        /* Loader Logic */
+        
+        #loader {
+            position: fixed;
+            inset: 0;
+            background: black;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 1s cubic-bezier(0.7, 0, 0.3, 1);
+        }
+        
+        .loader-hide {
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(1.1);
+        }
+        
+        .snake-path {
+            fill: none;
+            stroke: var(--mint);
+            stroke-width: 8;
+            stroke-dasharray: 150 1000;
+            animation: slither 2.5s infinite linear;
+            filter: drop-shadow(0 0 10px var(--mint));
+        }
+        
+        @keyframes slither {
+            0% {
+                stroke-dashoffset: 0;
+            }
+            100% {
+                stroke-dashoffset: -1000;
+            }
+        }
+        
+        .text-step {
+            opacity: 0;
+            transition: 0.8s;
+            position: absolute;
+            text-align: center;
+        }
+        
+        .active {
+            opacity: 1;
+            filter: drop-shadow(0 0 20px var(--mint));
+        }
+        /* Pure Black Inputs with Mint Glow on Focus */
+        
+        select,
+        input {
+            background: #000 !important;
+            border: 1px solid #222 !important;
+            color: #fff !important;
+            outline: none;
+            transition: 0.3s;
+        }
+        
+        select:focus,
+        input:focus {
+            border-color: var(--mint) !important;
+            box-shadow: 0 0 15px rgba(0, 255, 170, 0.3);
+        }
+        
+        .btn-analyze {
+            background: var(--mint);
+            color: black;
+            font-weight: 800;
+            transition: 0.3s;
+        }
+        
+        .btn-analyze:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 25px var(--mint);
+        }
+        
+        .input-label {
+            font-size: 9px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--mint);
+            margin-left: 4px;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="loader">
+        <div class="relative flex items-center justify-center">
+            <svg width="400" height="400" viewBox="0 0 400 400">
+                <circle cx="200" cy="200" r="160" class="snake-path" />
+            </svg>
+            <div id="s1" class="text-step">
+                <h1 class="text-5xl font-black italic tracking-tighter">DISK <span class="text-[#00ffaa]">FLOW</span></h1>
+            </div>
+            <div id="s2" class="text-step text-center">
+                <p class="text-[10px] tracking-[0.5em] text-zinc-500 uppercase">A Production By</p>
+                <h2 class="text-3xl font-black">RAKTHAPINJARI <br><span class="text-[#00ffaa]">CREATIONS</span></h2>
+            </div>
+        </div>
+    </div>
+
+    <nav class="p-10 flex justify-between max-w-7xl mx-auto items-center">
+        <span class="text-2xl font-black text-[#00ffaa] tracking-tighter uppercase">DiskFlow</span>
+        <div class="flex gap-8 text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500">
+            <a href="/" class="text-white border-b border-[#00ffaa]">Simulator</a>
+            <a href="/solutions" class="hover:text-white transition">Solutions</a>
+            <a href="/developers" class="hover:text-white transition">Developers</a>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-8 grid grid-cols-12 gap-8 py-2">
+        <div class="col-span-4 space-y-6">
+            <div class="shining-card p-8">
+                <h3 class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-8 border-b border-zinc-800 pb-4">Simulation Console</h3>
+
+                <div class="space-y-5">
+                    <div>
+                        <label class="input-label">Algorithm</label>
+                        <select id="algo" class="w-full p-4 rounded-xl mt-2">
+                            <option value="FCFS">FCFS (Default)</option>
+                            <option value="SSTF">SSTF (Closest First)</option>
+                            <option value="SCAN">SCAN (Elevator)</option>
+                            <option value="CSCAN">C-SCAN (Circular)</option>
+                            <option value="LOOK">LOOK</option>
+                            <option value="CLOOK">C-LOOK</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="input-label">Initial Head Position</label>
+                        <input type="number" id="head" value="50" class="w-full p-4 rounded-xl mt-2">
+                    </div>
+
+                    <div>
+                        <label class="input-label">Track Request Queue</label>
+                        <input type="text" id="queue" value="82, 170, 43, 140, 24, 16" class="w-full p-4 rounded-xl mt-2">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 pt-4">
+                        <button onclick="runSim()" class="btn-analyze py-4 rounded-xl uppercase text-[10px]">Analyze</button>
+                        <button onclick="randomize()" class="bg-zinc-900 hover:bg-zinc-800 py-4 rounded-xl uppercase text-[10px] font-bold border border-zinc-700 transition">Randomize</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="shining-card p-10 text-center">
+                <p class="text-[10px] font-bold text-zinc-500 uppercase mb-2">Total Seek Distance</p>
+                <h4 id="distText" class="text-7xl font-black text-[#00ffaa] tracking-tighter">0</h4>
+            </div>
+        </div>
+
+        <div class="col-span-8 shining-card p-10 h-[620px]">
+            <canvas id="mainChart"></canvas>
+        </div>
+    </main>
+
+    <script>
+        // Mouse Move Listener for Glow Effect
+        document.querySelectorAll('.shining-card').forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+            });
+        });
+
+        // Intro Logic
+        window.onload = () => {
+            const s1 = document.getElementById('s1'),
+                s2 = document.getElementById('s2');
+            setTimeout(() => s1.classList.add('active'), 500);
+            setTimeout(() => {
+                s1.classList.remove('active');
+                s2.classList.add('active');
+            }, 2500);
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('loader-hide');
+                runSim();
+            }, 5000);
+        };
+
+        function randomize() {
+            document.getElementById('head').value = Math.floor(Math.random() * 199);
+            document.getElementById('queue').value = Array.from({
+                length: 8
+            }, () => Math.floor(Math.random() * 199)).join(', ');
+            runSim();
+        }
+
+        let myChart;
+        async function runSim() {
+            const res = await fetch('/simulate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    algo: document.getElementById('algo').value,
+                    head: document.getElementById('head').value,
+                    tracks: document.getElementById('queue').value
+                })
+            });
+            const data = await res.json();
+            document.getElementById('distText').innerText = data.distance;
+
+            const ctx = document.getElementById('mainChart').getContext('2d');
+            if (myChart) myChart.destroy();
+            myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.sequence.map((_, i) => i),
+                    datasets: [{
+                        data: data.sequence,
+                        borderColor: '#00ffaa',
+                        borderWidth: 4,
+                        pointBackgroundColor: '#fff',
+                        pointRadius: 5,
+                        tension: 0,
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            min: 0,
+                            max: 200,
+                            grid: {
+                                color: '#1a1a1a'
+                            },
+                            ticks: {
+                                color: '#555'
+                            }
+                        },
+                        x: {
+                            display: false
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>
